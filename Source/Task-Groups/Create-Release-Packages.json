@@ -1,0 +1,231 @@
+{
+	"tasks": [
+		{
+			"displayName": "Download Ensure-Modules.ps1",
+			"alwaysRun": false,
+			"continueOnError": false,
+			"condition": "succeeded()",
+			"enabled": true,
+			"timeoutInMinutes": 0,
+			"inputs": {
+				"FileUrl": "$(EnsureModulesScriptUrl)",
+				"DestinationFolder": "$(DownloadScriptDestinationDirectory)",
+				"requireAuthentication": "false",
+				"Username": "",
+				"Password": ""
+			},
+			"task": {
+				"id": "ee8df0d0-dcc0-11e6-bf0f-4bcbb4b0e495",
+				"versionSpec": "1.*",
+				"definitionType": "task"
+			}
+		},
+		{
+			"displayName": "Download Create-Release-Packages.ps1",
+			"alwaysRun": false,
+			"continueOnError": false,
+			"condition": "succeeded()",
+			"enabled": true,
+			"timeoutInMinutes": 0,
+			"inputs": {
+				"FileUrl": "$(CreateReleasePackagesScriptUrl)",
+				"DestinationFolder": "$(DownloadScriptDestinationDirectory)",
+				"requireAuthentication": "false",
+				"Username": "",
+				"Password": ""
+			},
+			"task": {
+				"id": "ee8df0d0-dcc0-11e6-bf0f-4bcbb4b0e495",
+				"versionSpec": "1.*",
+				"definitionType": "task"
+			}
+		},
+		{
+			"displayName": "Ensure modules",
+			"alwaysRun": false,
+			"continueOnError": false,
+			"condition": "succeeded()",
+			"enabled": true,
+			"timeoutInMinutes": 0,
+			"inputs": {
+				"scriptType": "filePath",
+				"scriptName": "$(DownloadScriptDestinationDirectory)/Ensure-Modules.ps1",
+				"arguments": "",
+				"workingFolder": "",
+				"inlineScript": "",
+				"failOnStandardError": "true"
+			},
+			"task": {
+				"id": "e213ff0f-5d5c-4791-802d-52ea3e7be1f1",
+				"versionSpec": "1.*",
+				"definitionType": "task"
+			}
+		},
+		{
+			"displayName": "Create release-packages",
+			"alwaysRun": false,
+			"continueOnError": false,
+			"condition": "succeeded()",
+			"enabled": true,
+			"timeoutInMinutes": 0,
+			"inputs": {
+				"scriptType": "filePath",
+				"scriptName": "$(DownloadScriptDestinationDirectory)/Create-Release-Packages.ps1",
+				"arguments": "-Environments $(Environments) -NumberOfReleasesToKeep $(NumberOfReleasesToKeep) -PackagePath $(PackagePath) -ReleaseDirectoryPath $(ReleaseDirectoryPath) -ReleaseName $(ReleaseName) -SystemName $(SystemName)",
+				"workingFolder": "",
+				"inlineScript": "",
+				"failOnStandardError": "true"
+			},
+			"task": {
+				"id": "e213ff0f-5d5c-4791-802d-52ea3e7be1f1",
+				"versionSpec": "1.*",
+				"definitionType": "task"
+			}
+		}
+	],
+	"runsOn": [ "Agent", "DeploymentGroup" ],
+	"revision": 1,
+	"createdBy": {
+		"displayName": "Region Örebro län",
+		"id": "ccb20085-aa83-40f1-a772-69d97400ecf0",
+		"uniqueName": "Region Örebro län"
+	},
+	"createdOn": "2018-08-30T08:54:13.257Z",
+	"modifiedBy": {
+		"displayName": "Region Örebro län",
+		"id": "ccb20085-aa83-40f1-a772-69d97400ecf0",
+		"uniqueName": "Region Örebro län"
+	},
+	"modifiedOn": "2018-08-30T08:54:13.257Z",
+	"id": "f15d8482-e938-4621-b4af-89b3b76f40c8",
+	"name": "Create release-packages",
+	"version": {
+		"major": 1,
+		"minor": 0,
+		"patch": 0,
+		"isTest": false
+	},
+	"iconUrl": "/_static/tfs/Dev16.M131.6/_content/icon-meta-task.png",
+	"friendlyName": "Create release-packages",
+	"description": "A collection of tasks for creating release-packages.",
+	"category": "Deploy",
+	"definitionType": "metaTask",
+	"author": "Region Örebro län",
+	"demands": [],
+	"groups": [],
+	"inputs": [
+		{
+			"aliases": [],
+			"options": {},
+			"properties": {},
+			"name": "CreateReleasePackagesScriptUrl",
+			"label": "CreateReleasePackagesScriptUrl",
+			"defaultValue": "https://raw.githubusercontent.com/RegionOrebroLan-Lab/Build-And-Release/master/Source/Scripts/Create-Release-Packages.ps1",
+			"required": true,
+			"type": "string",
+			"helpMarkDown": "",
+			"groupName": ""
+		},
+		{
+			"aliases": [],
+			"options": {},
+			"properties": {},
+			"name": "DownloadScriptDestinationDirectory",
+			"label": "DownloadScriptDestinationDirectory",
+			"defaultValue": "$(System.DefaultWorkingDirectory)",
+			"required": true,
+			"type": "string",
+			"helpMarkDown": "",
+			"groupName": ""
+		},
+		{
+			"aliases": [],
+			"options": {},
+			"properties": {},
+			"name": "EnsureModulesScriptUrl",
+			"label": "EnsureModulesScriptUrl",
+			"defaultValue": "https://raw.githubusercontent.com/RegionOrebroLan-Lab/Build-And-Release/master/Source/Scripts/Ensure-Modules.ps1",
+			"required": true,
+			"type": "string",
+			"helpMarkDown": "",
+			"groupName": ""
+		},
+		{
+			"aliases": [],
+			"options": {},
+			"properties": {},
+			"name": "Environments",
+			"label": "Environments",
+			"defaultValue": "",
+			"required": true,
+			"type": "string",
+			"helpMarkDown": "",
+			"groupName": ""
+		},
+		{
+			"aliases": [],
+			"options": {},
+			"properties": {},
+			"name": "ReleaseName",
+			"label": "ReleaseName",
+			"defaultValue": "$(Release.ReleaseName)",
+			"required": true,
+			"type": "string",
+			"helpMarkDown": "",
+			"groupName": ""
+		},
+		{
+			"aliases": [],
+			"options": {},
+			"properties": {},
+			"name": "NumberOfReleasesToKeep",
+			"label": "NumberOfReleasesToKeep",
+			"defaultValue": 10,
+			"required": true,
+			"type": "int",
+			"helpMarkDown": "",
+			"groupName": ""
+		},
+		{
+			"aliases": [],
+			"options": {},
+			"properties": {},
+			"name": "PackagePath",
+			"label": "PackagePath",
+			"defaultValue": "$(System.DefaultWorkingDirectory)\\Build\\Drop\\Package\\",
+			"required": true,
+			"type": "string",
+			"helpMarkDown": "",
+			"groupName": ""
+		},
+		{
+			"aliases": [],
+			"options": {},
+			"properties": {},
+			"name": "ReleaseDirectoryPath",
+			"label": "ReleaseDirectoryPath",
+			"defaultValue": "$(ReleaseDirectoryPath)",
+			"required": true,
+			"type": "string",
+			"helpMarkDown": "",
+			"groupName": ""
+		},
+		{
+			"aliases": [],
+			"options": {},
+			"properties": {},
+			"name": "SystemName",
+			"label": "SystemName",
+			"defaultValue": "$(SystemName)",
+			"required": true,
+			"type": "string",
+			"helpMarkDown": "",
+			"groupName": ""
+		}
+	],
+	"satisfies": [],
+	"sourceDefinitions": [],
+	"dataSourceBindings": [],
+	"instanceNameFormat": "Task group: Create release-packages",
+	"execution": {}
+}
