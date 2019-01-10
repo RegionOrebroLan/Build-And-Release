@@ -24,7 +24,7 @@ To build the project correctly use the following arguments (MSBuild Arguments) f
 ##### 1.1.1.1
  
     -Environments @{"Development"=@{"MachineName"="SYSTEM-DEVELOPMENT-01"};"Test"=@{"MachineName"="SYSTEM-TEST-01"};"Stage"=@{"Stage-A"=@{"MachineName"="SYSTEM-STAGE-02";"PathToDeletePatterns"=@("Modules")};"Stage-B"=@{"MachineName"="SYSTEM-STAGE-03";"PathToDeletePatterns"=@("Modules")};"Stage-Edit"=@{"MachineName"="SYSTEM-STAGE-01"}};"Production"=@{"Production-A"=@{"MachineName"="SYSTEM-PRODUCTION-02";"PathToDeletePatterns"=@("Modules")};"Production-B"=@{"MachineName"="SYSTEM-PRODUCTION-03";"PathToDeletePatterns"=@("Modules")};"Production-Edit"=@{"MachineName"="SYSTEM-PRODUCTION-01"}}}
-    -PackageRootFilePath $(System.DefaultWorkingDirectory)\Build\drop\**\PackageTmp\Web.config
+    -PackagePath $(System.DefaultWorkingDirectory)\Build\Drop\Package\
     -ReleaseDirectoryPath \\SOME-MACHINE\Releases\
     -ReleaseName $(Release.ReleaseName)
     -SystemName Company-Web
@@ -33,7 +33,7 @@ To build the project correctly use the following arguments (MSBuild Arguments) f
 
     -Environments @{"Development"=@{"MachineName"="SYSTEM-DEVELOPMENT-01"};"Test"=@{"MachineName"="SYSTEM-TEST-01"};"Stage"=@{"Stage-A"=@{"MachineName"="SYSTEM-STAGE-02";"PathToDeletePatterns"=@("Modules")};"Stage-B"=@{"MachineName"="SYSTEM-STAGE-03";"PathToDeletePatterns"=@("Modules")};"Stage-Edit"=@{"MachineName"="SYSTEM-STAGE-01"}};"Production"=@{"Production-A"=@{"MachineName"="SYSTEM-PRODUCTION-02";"PathToDeletePatterns"=@("Modules")};"Production-B"=@{"MachineName"="SYSTEM-PRODUCTION-03";"PathToDeletePatterns"=@("Modules")};"Production-Edit"=@{"MachineName"="SYSTEM-PRODUCTION-01"}}}
     -NumberOfReleasesToKeep 20
-    -PackageRootFilePath $(System.DefaultWorkingDirectory)\Build\drop\**\PackageTmp\Web.config
+    -PackagePath $(System.DefaultWorkingDirectory)\Build\Drop\Package\
     -ReleaseDirectoryPath \\SOME-MACHINE\Releases\
     -ReleaseName $(Release.ReleaseName)
     -SystemName Company-Web
