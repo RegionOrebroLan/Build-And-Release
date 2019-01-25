@@ -50,7 +50,8 @@ To build the project correctly use the following arguments (MSBuild Arguments) f
 	    "Stage"=@{
 		    "Stage-A"=@{
 			    "MachineName"="SYSTEM-STAGE-02";
-			    "PathToDeletePatterns"=@("Modules")
+			    "PathToDeletePatterns"=@("Modules");
+			    "TransformationNames"=@("Release", "Stage", "Stage-A")
 		    };
 		    "Stage-B"=@{
 			    "MachineName"="SYSTEM-STAGE-03";

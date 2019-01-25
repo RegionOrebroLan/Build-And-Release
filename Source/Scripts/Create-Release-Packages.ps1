@@ -1,8 +1,10 @@
 param
 (
+	[bool]$debugRelease = $false,
 	[Parameter(Mandatory)]
 	[hashtable]$environments,
 	[int]$numberOfReleasesToKeep = 10,
+	[bool]$overwrite = $true,
 	[Parameter(Mandatory)]
 	[string]$packagePath,
 	[Parameter(Mandatory)]
@@ -46,14 +48,28 @@ function TryAddReleasePackageInformation
 			}
 		}
 
-		$_transformationNames = New-Object System.Collections.Generic.List[string];
+		$_explicitTransformationNames = $_environment[$transformationNamesKey];
+		$_transformationNames = New-Object System.Collections.Generic.List[string];		
 
-		foreach($transformationName in $transformationNames)
+		if($_explicitTransformationNames)
 		{
-			$_transformationNames.Add($transformationName);
+			foreach($transformationName in $_explicitTransformationNames)
+			{
+				if($transformationName)
+				{
+					$_transformationNames.Add($transformationName);
+				}
+			}
 		}
+		else
+		{
+			foreach($transformationName in $transformationNames)
+			{
+				$_transformationNames.Add($transformationName);
+			}
 
-		$_transformationNames.Add($_transformationName);
+			$_transformationNames.Add($_transformationName);
+		}
 
 		$_releasePackageInformation = New-Object System.Collections.Hashtable;
 
@@ -79,6 +95,11 @@ $pathToDeletePatternsKey = "PathToDeletePatterns";
 $transformationNames = @("Release");
 $transformationNamesKey = "TransformationNames";
 
+if($debugRelease)
+{
+	$transformationNames = @("Debug");
+}
+
 Write-Host "Account running the process: ""$($env:UserName)""";
 
 Write-Host "Package-path: ""$($packagePath)""";
@@ -100,13 +121,29 @@ $systemReleaseDirectoryPath = Join-Path -ChildPath $systemName -Path $releaseDir
 if(!(Test-Path -Path $systemReleaseDirectoryPath))
 {
 	Write-Host "Creating system-release-directory ""$($systemReleaseDirectoryPath)"" ...";
-	New-Item -ItemType Directory -Path $systemReleaseDirectoryPath;
+	New-Item -ItemType Directory -Path $systemReleaseDirectoryPath | Out-Null;
 }
 
 $currentReleaseDirectoryPath = Join-Path -ChildPath $releaseName -Path $systemReleaseDirectoryPath;
 
-Write-Host "Creating current release-directory ""$($currentReleaseDirectoryPath)"" ...";
-New-Item -ItemType Directory -Path $currentReleaseDirectoryPath;
+if(Test-Path -Path $currentReleaseDirectoryPath)
+{
+	if($overwrite)
+	{
+		Write-Host "Replacing current release-directory ""$($currentReleaseDirectoryPath)"" ...";
+		Remove-Item -Path $currentReleaseDirectoryPath -Recurse;
+	}
+	else
+	{
+		throw [System.IO.IOException] "The current release-directory ""$($currentReleaseDirectoryPath)"" already exist. You can set the parameter -Overwrite to true to replace it.";
+	}
+}
+else
+{
+	Write-Host "Creating current release-directory ""$($currentReleaseDirectoryPath)"" ...";
+}
+
+New-Item -ItemType Directory -Path $currentReleaseDirectoryPath | Out-Null;
 
 $releasePackageInformationList = New-Object System.Collections.Hashtable;
 
@@ -114,7 +151,7 @@ foreach($key in $environments.Keys)
 {
 	$environmentDirectoryPath = Join-Path -ChildPath $key -Path $currentReleaseDirectoryPath;
 	Write-Host "Creating environment-directory ""$($environmentDirectoryPath)"" ...";
-	New-Item -ItemType Directory -Path $environmentDirectoryPath;
+	New-Item -ItemType Directory -Path $environmentDirectoryPath | Out-Null;
 
 	if(!(TryAddReleasePackageInformation $environmentDirectoryPath $environments[$key] $releasePackageInformationList $key))
 	{
@@ -122,9 +159,9 @@ foreach($key in $environments.Keys)
 		{
 			$subEnvironmentDirectoryPath = Join-Path -ChildPath $subKey -Path $environmentDirectoryPath;
 			Write-Host "Creating sub-environment-directory ""$($subEnvironmentDirectoryPath)"" ...";
-			New-Item -ItemType Directory -Path $subEnvironmentDirectoryPath;
+			New-Item -ItemType Directory -Path $subEnvironmentDirectoryPath | Out-Null;
 
-			TryAddReleasePackageInformation $subEnvironmentDirectoryPath $environments[$key][$subKey] $releasePackageInformationList $subKey;
+			TryAddReleasePackageInformation $subEnvironmentDirectoryPath $environments[$key][$subKey] $releasePackageInformationList $subKey | Out-Null;
 		}
 	}
 }
@@ -138,11 +175,16 @@ foreach($key in $releasePackageInformationList.Keys)
 
 	$machineNameFilePath = Join-Path -ChildPath "$($_releasePackageInformation[$machineNameKey]).txt" -Path $key;
 	Write-Host "Creating machine-name-file ""$($machineNameFilePath)"" ...";
-	New-Item -ItemType File -Path $machineNameFilePath;
-
-	Write-Host "Transforming package ...";
+	New-Item -ItemType File -Path $machineNameFilePath | Out-Null;
 
 	$_transformationNames = $_releasePackageInformation[$transformationNamesKey];
+
+	Write-Host "Transforming package ...";
+	Write-Host " - Destination: $($_destination)";
+	Write-Host " - FileToTransformPatterns: $($fileToTransformPatterns)";
+	Write-Host " - PathToDeletePatterns: $($_releasePackageInformation[$pathToDeletePatternsKey])";
+	Write-Host " - Source: $($packagePath)";
+	Write-Host " - TransformationNames: $($_transformationNames)";
 
 	New-PackageTransform `
 		-Destination $_destination `
