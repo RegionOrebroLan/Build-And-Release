@@ -9,7 +9,7 @@ PowerShell-scripts and task-groups to use with build- and release-definitions in
 To get this script to work, to create release packages properly, you need to build the project correctly.
 To build the project correctly use the following arguments (MSBuild Arguments) for the **Visual Studio Build**-task:
 
-    /p:_PackageTempDir=$(build.artifactstagingdirectory)\Package\
+    /p:_PackageTempDir=$(Build.ArtifactStagingDirectory)\Package\
     /p:AutoParameterizationWebConfigConnectionStrings=false
     /p:DeployOnBuild=true
     /p:MarkWebConfigAssistFilesAsExclude=false
